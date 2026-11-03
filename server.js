@@ -37,6 +37,7 @@ function view(room, index) {
     seconds: room.seconds,
     deadline: room.deadline,
     revealUntil: room.revealUntil,
+    history: room.history.map((r, i) => ({ round: i + 1, words: room.phase === 'won' || room.phase === 'reveal' ? r.words : undefined, matched: r.matched })),
     winner: room.phase === 'won',
     players: room.players.map((x, i) => ({
       name: x.name, submitted: x.word !== null,
@@ -67,6 +68,7 @@ function startRound(room) {
 function checkReveal(room) {
   if (room.phase !== 'writing' || room.players.length !== 2 || !room.players.every(p => p.word !== null)) return;
   const [a, b] = room.players.map(p => p.word.trim().normalize('NFKC').toLocaleLowerCase());
+  room.history.push({ words: room.players.map(p => p.word || ''), matched: a.length > 0 && a === b });
   room.phase = a.length > 0 && a === b ? 'won' : 'reveal';
   room.deadline = null;
   room.revealUntil = room.phase === 'reveal' ? Date.now() + 5000 : null;
@@ -84,7 +86,7 @@ const routes = {
     name = clean(name, 18);
     if (!name) throw new Error('请输入昵称');
     const token = makeId();
-    const room = { code: code(), host: token, seconds: s, phase: 'lobby', round: 0,
+    const room = { code: code(), host: token, seconds: s, phase: 'lobby', round: 0, history: [],
       deadline: null, revealUntil: null, created: Date.now(), updated: Date.now(),
       players: [{ token, name, word: null }] };
     rooms.set(room.code, room);
