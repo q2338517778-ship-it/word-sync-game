@@ -37,7 +37,7 @@ function view(room, index) {
     seconds: room.seconds,
     deadline: room.deadline,
     revealUntil: room.revealUntil,
-    history: room.history.map((r, i) => ({ round: i + 1, words: room.phase === 'won' || room.phase === 'reveal' ? r.words : undefined, matched: r.matched })),
+    history: room.history.map((r, i) => ({ round: i + 1, words: r.words, matched: r.matched })),
     winner: room.phase === 'won',
     players: room.players.map((x, i) => ({
       name: x.name, submitted: x.word !== null,
