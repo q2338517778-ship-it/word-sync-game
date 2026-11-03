@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: word-sync
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    numInstances: 1
